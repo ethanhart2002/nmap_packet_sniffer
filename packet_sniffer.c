@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <pcap.h>
 #include <stdlib.h>
 #include <inttypes.h>
@@ -71,14 +72,17 @@ void callback_function (u_char *args, const struct pcap_pkthdr* pkthdr, const u_
 		if (win_field == 128) {
 			if (tcp_flags & 0x000) {
 				printf("Extremely probable NMAP OS scan detected: Unusually small TCP Window Size Length of %" PRIu16 " and TCP flag bits of 0x%03X match OS scan fingerprint.\n", win_field, 0x000);
+				show_warning_window(inet_ntoa(ip_header->ip_src));
 			}
 		} else if (win_field == 256) {
 			if (tcp_flags & 0x02b) {
 				printf("Extremely probable NMAP OS scan detected: Unusually small TCP Window Size Length of %" PRIu16 " and TCP flag bits of 0x%03X match OS scan fingerprint.\n", win_field, 0x02b);
+				show_warning_window(inet_ntoa(ip_header->ip_src));
 			}
 		} else if (win_field == 1024) {
 			if (tcp_flags & 0x010) {
 				printf("Extremely probable NMAP OS scan detected: Unusually small TCP Window Size Length of %" PRIu16 " and TCP flag bits of 0x%03X match OS scan fingerprint.\n", win_field, 0x010);
+				show_warning_window(inet_ntoa(ip_header->ip_src));
 			}
 		}
 	}
@@ -101,6 +105,16 @@ void callback_function (u_char *args, const struct pcap_pkthdr* pkthdr, const u_
 		}
 	}
 	printf("-----------------------------------------\n");
+}
+
+void show_warning_window(char[] sourceIP) {
+  char text[256];
+  char command[256];
+  sprintf(text, "Warning: Suspect NMAP scan coming from the source IP: %s", sourceIP);
+  sprintf(command, "zenity --warning --text='%s'", text);
+  if (system(command)==-1) {
+    printf("Error making window.");
+  }
 }
 
 int main() {
