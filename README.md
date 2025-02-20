@@ -11,7 +11,6 @@ This project currently runs on Unix-based operating systems to be able to use th
  - Compile the 'packet_sniffer.c' file with the libpcap library.
  ```
  gcc packet_sniffer.c -o <filename> -lpcap
-
  ```
  - Run the resulting executable.
 
