@@ -70,7 +70,7 @@ void callback_function (u_char *args, const struct pcap_pkthdr* pkthdr, const u_
 
 		// Strategy: Look at TCP flags in packet. NMAP OS Scans always have the packets with these following conditions. Flags are stored in bitmasks, which can be found in the header file netinet/tcp.h
 		if (win_field == 128) {
-			if (tcp_flags & 0x000) {
+			if (tcp_flags & 0) {
 				printf("Extremely probable NMAP OS scan detected: Unusually small TCP Window Size Length of %" PRIu16 " and TCP flag bits of 0x%03X match OS scan fingerprint.\n", win_field, 0x000);
 				show_warning_window(inet_ntoa(ip_header->ip_src));
 			}
@@ -110,19 +110,20 @@ void callback_function (u_char *args, const struct pcap_pkthdr* pkthdr, const u_
 void show_warning_window(char[] sourceIP) {
   char text[256];
   char command[256];
-  sprintf(text, "Warning: Suspect NMAP scan coming from the source IP: %s", sourceIP);
-  sprintf(command, "zenity --warning --text='%s'", text);
+  snprintf(text, "Warning: Suspect NMAP scan coming from the source IP: %s", 20, sourceIP);
+  snprintf(command, "zenity --warning --text='%s'", 100, text);
   if (system(command)==-1) {
     printf("Error making window.");
   }
 }
 
-int main() {
+int main(int argc, int *argv[]) {
 
 	printf("Starting...\n");
 
 	//interface that program should sniff packets on
-	char device[] = "wlan0";
+	char *device[] = argc > 1 ? argv[1] : "wlan0";
+	// char device[] = "wlan0";
 	char errbuf[PCAP_ERRBUF_SIZE];
 	pcap_t* descr;
 
@@ -147,9 +148,9 @@ int main() {
 		return 1;
 	}
     
-    //Setting up a filter on port 80. Can also set up for TCP, UDP, etc.
+    //Setting up a filter with tcp. Can also set up for TCP, UDP, etc.
 	printf("About to pcap_compile... \n");
-	pcap_compile(descr, &fp, "port 80", 0, netp);
+	pcap_compile(descr, &fp, "tcp", 0, netp);
 	printf("About to pcap_setfilter... \n");
 	pcap_setfilter(descr, &fp);
 
