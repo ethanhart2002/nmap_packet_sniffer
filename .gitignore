@@ -1,0 +1,4 @@
+# ignore bin dir
+bin/
+# ignore Makefile
+Makefile 
