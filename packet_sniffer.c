@@ -152,12 +152,14 @@ int main(int argc, int *argv[]) {
 	//printf("Starting...\n");
 
 	//interface that program should sniff packets on
-	char *device = argc > 1 ? argv[1] : "wlan0";
+	char *device = "wlan0";
 	char errbuf[PCAP_ERRBUF_SIZE];
 	pcap_t* descr;
+
+	// modes: 0 is quiet, 1 is verbose
 	int mode = 0;
-	if (argc > 2) {
-		if (strcmp(argv[2], "-v") == 0) {
+	if (argc > 1) {
+		if (strcmp(argv[1], "-v") == 0) {
 			mode = 1;
 		}
 	}
