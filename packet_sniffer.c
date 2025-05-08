@@ -11,16 +11,16 @@
 #include <net/ethernet.h>
 #include <string.h>
 
-// #define VERBOSITY argc > 2 ? ((strcomp(argv[2], "-v")))
-
-
 
 // Documented window sizes for NMAP OS Scan TCP packets
 uint16_t window_field_sizes[] = {1, 4, 16, 63, 128, 256, 512, 1024};
 const char* SYSTEM_DISPLAY;
 
+// Function declaration for window display with Zenity
 void show_warning_window(char* sourceIP);
 
+
+// Structure that defines variables to be passed to callbackj function
 typedef struct {
 	int verbosity;
 } Loop_args;
@@ -149,7 +149,6 @@ void show_warning_window(char* sourceIP) {
 
 int main(int argc, int *argv[]) {
 
-	//printf("Starting...\n");
 
 	//interface that program should sniff packets on
 	char *device = "wlan0";
@@ -163,9 +162,13 @@ int main(int argc, int *argv[]) {
 			mode = 1;
 		}
 	}
+
+	// Defined for callback function
 	Loop_args l_args = {mode};
+
+	if (mode == 1) printf("Starting...\n");
 	if (mode == 1) printf("device: %s \n", device);;
-	// sleep(5);
+	
 
 	// for filter
 	struct bpf_program fp; 
@@ -184,16 +187,18 @@ int main(int argc, int *argv[]) {
 	if (mode == 1) printf("About to pcap_open_live.... \n");
 	descr = pcap_open_live(device, BUFSIZ, 1, -1, errbuf);
 	if (descr == NULL) {
-		if (mode == 1) fprintf(stderr, "Can't open device %s. %s \n", device, errbuf);
+		fprintf(stderr, "Can't open device %s. %s \n", device, errbuf);
 		return 1;
 	}
     
-    //Setting up a filter with tcp. Can also set up for TCP, UDP, etc.
+  // Setting up a filter with tcp. Can also set up for TCP, UDP, etc.
 	if (mode == 1) printf("About to pcap_compile... \n");
 	pcap_compile(descr, &fp, "tcp", 0, netp);
 	if (mode == 1) printf("About to pcap_setfilter... \n");
 	pcap_setfilter(descr, &fp);
 
+
+	// Process packet using callback function
 	if (mode == 1) printf("Entering pcap_loop... \n");
 	pcap_loop(descr, -1, callback_function, (u_char *)&l_args);
 
