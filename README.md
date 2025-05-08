@@ -31,6 +31,7 @@ This callback function is meant to be user-defined. As a project that aims to di
  - Lightweight program that processes packets incredibly fast.
  - Well-documented source code allows for readability.
  - Is scalable for implementation of future Nmap scan detectors as well as flags and other runtime options.
+ - Can be added as a daemon to run in the background. 
 
 # Cons
  - Encountered some issues trying to run on wlan0 (wifi) interface while eth0 (ethernet) interface was up and running. This is why the current version runs on wlan0 by default. 
